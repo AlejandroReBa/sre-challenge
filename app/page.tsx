@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { getVisits } from "./repository/visits";
 
+export const revalidate = 0;
+
 export default async function Home() {
   const visits = await getVisits();
   return (

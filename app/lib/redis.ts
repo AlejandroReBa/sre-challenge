@@ -18,7 +18,7 @@ export default class RedisClient {
 
       // Add error event handler to handle connection errors
       RedisClient.instance.on("error", (error) => {
-        //do nothing
+        console.error(error);
       });
     }
     return RedisClient.instance;
