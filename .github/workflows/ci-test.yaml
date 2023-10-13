@@ -1,0 +1,22 @@
+name: ci-check
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: [ "main-challenge" ]
+
+jobs:
+  test:
+    name: ci-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies and run tests
+        run: yarn --frozen-lockfile && yarn ci:test
+        

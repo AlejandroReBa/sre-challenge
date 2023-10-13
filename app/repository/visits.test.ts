@@ -1,5 +1,3 @@
-import { getVisits } from './visits';
-
 describe('getVisits', () => {
     // TODO
     it('dummy test should return the correct visits count and lastVisit values', async () => {

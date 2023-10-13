@@ -47,3 +47,9 @@ Write it as this was a real world production project, so keep into account thing
 Last but not least, please write a meaninful documentation of your design choices and how a developer can deploy the project.
 
 
+## Documentation exercise 1 - Pipelines
+- Use Github Actions
+- Use act to run Github Actions locally: https://github.com/nektos/act 
+  - act --list --container-architecture linux/amd64
+  - act -j test --container-architecture linux/amd64
+  - act -j build -s DOCKERHUB_USERNAME -s DOCKERHUB_TOKEN --container-architecture linux/amd64
