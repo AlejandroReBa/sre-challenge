@@ -18,5 +18,5 @@ jobs:
         run: npm install -g yarn
 
       - name: Install dependencies and run tests
-        run: yarn --frozen-lockfile && yarn ci:test
+        run: yarn --frozen-lockfile && yarn test:ci
         
