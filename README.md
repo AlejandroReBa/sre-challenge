@@ -52,5 +52,6 @@ Last but not least, please write a meaninful documentation of your design choice
 - Use act to run Github Actions locally: (install it: https://github.com/nektos/act) # linux/arm64 for better performance with M chips - uncompatibilities may arise
 - act --list --container-architecture linux/amd64
 - act -W .github/workflows/ci-check.yaml --container-architecture linux/amd64
-- act -j test --container-architecture linux/amd64
+- act -j unit-tests --container-architecture linux/amd64
+- act -j build-test -s SNYK_TOKEN --container-architecture linux/amd64
 - act -j build -s DOCKERHUB_USERNAME -s DOCKERHUB_TOKEN -s GITHUB_TOKEN --container-architecture linux/amd64
