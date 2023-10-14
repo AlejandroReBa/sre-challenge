@@ -25,6 +25,10 @@ redisDB:
       cpu: 250m
       ram: 256Mi
 
+registry:
+  url: alejandroreba
+#  imagePullSecretKey: ''
+
 #replicaCount: 1
 
 # image:
