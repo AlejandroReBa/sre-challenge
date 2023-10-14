@@ -1,0 +1,43 @@
+name: ci-check
+
+on:
+  push:
+    branches-ignore: ["main-challenge"]
+  pull_request:
+    branches: [ "main-challenge" ]
+
+jobs:
+  unit-tests:
+    name: ci-unit-tests
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+
+      - name: Install yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      
+      - name: Run tests
+        run: yarn test:ci
+
+  build-test:
+    runs-on: ubuntu-22.04
+    name: ci-build-test
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Test Build
+        run: docker build . --target runner -t ci-test-image
+      - name: Run Snyk to check Docker image for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: ci-test-image
+
+      
+
+        
