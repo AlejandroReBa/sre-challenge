@@ -24,6 +24,5 @@ jobs:
         push: true
         target: runner
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/visit-tracker-app:${{ github.sha }}, ${{ secrets.DOCKERHUB_USERNAME }}/visit-tracker-app:latest
-        registry: ${{ secrets.DOCKERHUB_ }}
         secrets: |
           "github_token=${{ secrets.GITHUB_TOKEN }}"
