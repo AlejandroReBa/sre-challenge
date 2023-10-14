@@ -55,3 +55,34 @@ Last but not least, please write a meaninful documentation of your design choice
 - act -j unit-tests --container-architecture linux/amd64
 - act -j build-test -s SNYK_TOKEN --container-architecture linux/amd64
 - act -j build -s DOCKERHUB_USERNAME -s DOCKERHUB_TOKEN -s GITHUB_TOKEN --container-architecture linux/amd64
+
+## Documentation exercise 2 - Kubernetes
+- Using Kubernetes builtin on top of Docker Desktop (k3s, minikube or kind are other possibilities)
+- Developers need to install kubectl and helm
+- Helm wrapper has been created using `helm init` and removing to have only the minimum required configuration.
+We only use helm to set a strict separation of config from code, so we can build once and deploy many - https://12factor.net/
+- We deploy new versions using rolling updates (allow Deployments' update to take place with zero downtime by incrementally updating Pods instances with new ones).
+- For pod security we [restrict escalation and root privileges](https://learn.microsoft.com/en-us/azure/aks/developer-best-practices-pod-security)
+- For high availability we use initially affinities on pods: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#more-practical-use-cases
+Allocating replicas among different nodes with soft antiAffinity on lower environments.
+```yaml
+  preferredDuringSchedulingIgnoredDuringExecution:
+  ...
+    topologyKey: "kubernetes.io/hostname"
+```
+and among different [region](https://kubernetes.io/docs/reference/labels-annotations-taints/#topologykubernetesioregion), zones and nodes with hard antiAffinity on higher environments.
+```yaml
+  requiredDuringSchedulingIgnoredDuringExecution:
+  ...
+    topologyKey: "kubernetes.io/hostname"
+    topologyKey: "topology.kubernetes.io/region"
+    topologyKey: "topology.kubernetes.io/zone"
+```
+ At scale, however, I would analyze each application/component use case and evaluate the use of topology-spread-constraint to a more granular control of the availability: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+
+- For scalability we use horizontal pod autoscaler with metrics server: https://github.com/kubernetes-sigs/metrics-server
+
+- Deploy to dev:
+```bash
+helm template ./ops/charts -f ./ops/charts/env/dev/values.yaml --set imageTag=`(git rev-parse HEAD)`
+```

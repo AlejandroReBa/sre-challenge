@@ -1,0 +1,10 @@
+visitTrackerApp:
+  resources:
+    limits:
+      cpu: 250m
+      ram: 256Mi
+    requests:
+      cpu: 250m
+      ram: 256Mi
+  nodeSelector: { agentpool: visitTrackerApp } # example of nodeSelector matching a nodeLabel
+  antiAffinity: soft
