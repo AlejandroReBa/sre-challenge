@@ -2,13 +2,13 @@ name: ci-check
 
 on:
   push:
-    branches: ["*"]
+    branches-ignore: ["main-challenge"]
   pull_request:
     branches: [ "main-challenge" ]
 
 jobs:
-  test:
-    name: ci-test
+  unit-tests:
+    name: ci-unit-tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the repo
@@ -18,5 +18,20 @@ jobs:
         run: npm install -g yarn
 
       - name: Install dependencies and run tests
-        run: yarn --frozen-lockfile && yarn test:ci
+        run: yarn --frozen-lockfile
+      
+      - name: Run tests
+        run: yarn test:ci
+
+  build-test:
+    runs-on: ubuntu-latest
+    name: ci-build-test
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v4
+      - name: Test Build
+        run: docker build .
+
+      
+
         
