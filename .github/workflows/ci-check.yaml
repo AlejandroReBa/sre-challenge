@@ -30,7 +30,13 @@ jobs:
       - name: Checkout the repo
         uses: actions/checkout@v4
       - name: Test Build
-        run: docker build . --target runner
+        run: docker build . --target runner -t ci-test-image
+      - name: Run Snyk to check Docker image for vulnerabilities
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: ci-test-image
 
       
 
