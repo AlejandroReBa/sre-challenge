@@ -1,3 +1,9 @@
+registry:
+  url: alejandroreba
+# imagePullSecretKey: ''
+
+namespace: sre-challenge
+
 visitTrackerApp:
   nodeSelector: { agentpool: visitTrackerApp } # example of nodeSelector matching a nodeLabel
   tolerations:
@@ -24,10 +30,6 @@ redisDB:
     requests:
       cpu: 250m
       ram: 256Mi
-
-registry:
-  url: alejandroreba
-#  imagePullSecretKey: ''
 
 #replicaCount: 1
 

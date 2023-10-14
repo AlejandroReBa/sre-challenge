@@ -1,0 +1,18 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Chart.Name }}-svc
+  namespace: {{.Values.namespace}}
+  labels:
+    k8s-app: {{ .Chart.Name }}-svc
+spec:
+  ports:
+    - name: {{ .Chart.Name }}-svc
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+  selector:
+    k8s-app: {{ .Chart.Name }}
+  type: ClusterIP
+  sessionAffinity: None
