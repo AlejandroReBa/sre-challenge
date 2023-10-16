@@ -94,3 +94,7 @@ and among different [region](https://kubernetes.io/docs/reference/labels-annotat
 ```bash
 helm template ./ops/charts -f ./ops/charts/env/dev/values.yaml --set imageTag=`(git rev-parse HEAD)`
 ```
+
+- NODE_OPTIONS='--inspect' node server.js
+- apk --update add redis 
+- redis-cli -u redis://default:ormNS8q7Q5@redis-cluster.sre-challenge.svc:6379 ping
