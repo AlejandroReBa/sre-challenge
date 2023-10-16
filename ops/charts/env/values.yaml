@@ -1,9 +1,0 @@
-visitTrackerApp:
-  resources:
-    limits:
-      cpu: 500m
-      ram: 512Mi
-    requests:
-      cpu: 5000m
-      ram: 512Mi
-  antiAffinity: hard

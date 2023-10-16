@@ -80,6 +80,14 @@ and among different [region](https://kubernetes.io/docs/reference/labels-annotat
 ```
  At scale, however, I would analyze each application/component use case and evaluate the use of topology-spread-constraint to a more granular control of the availability: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
 
+- For redis on development environment we can use a single-node, but for production we have several choices
+  - My recommendation for DDBB is to use a SaaS/DBaaS approach. For Redis, in example, we have the [DBaaS Enterprise Cloud Service] (https://redis.com/redis-enterprise/advantages/) so operations don't need to guarantee the performance, high availability, geodistribution, disaster recovery, security, etc. There are also alternatives on top of Redis (API compliance) as [Dragonfly](https://www.dragonflydb.io/)
+  - Previous to have a builtin Redis on Kubernetes on production, we need to analyze the use case to decide whether Redis Sentinel or Redis Cluster is the best choice, and also compare helm charts possibilities as the one from [bitnami](https://github.com/bitnami/charts/tree/main/bitnami/redis-cluster). For this exercise we have used this helm chart (redis-cluster-9.0.12) as reference 
+  ```bash
+  helm template oci://registry-1.docker.io/bitnamicharts/redis-cluster
+  ```
+  so we set a statefulset cluster with many nodes.
+
 - For scalability we use horizontal pod autoscaler with metrics server: https://github.com/kubernetes-sigs/metrics-server
 
 - Deploy to dev:
