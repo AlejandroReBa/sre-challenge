@@ -2,10 +2,10 @@ visitTrackerApp:
   resources:
     limits:
       cpu: 250m
-      ram: 256Mi
+      ram: 512Mi
     requests:
       cpu: 250m
-      ram: 256Mi
+      ram: 512Mi
   antiAffinity: soft
 
 redisDB:
