@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}
-  namespace: {{.Values.namespace}}
+  namespace: {{ .Values.namespace }}
   labels:
     k8s-app: {{ .Chart.Name }}
 spec:
@@ -20,26 +20,37 @@ spec:
       labels:
         k8s-app: {{ .Chart.Name }}
     spec:
-      securityContext:
-        fsGroup: 2000
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 3000
+            runAsUser: 1001
             allowPrivilegeEscalation: false
-          image: {{.Values.registry.url}}/{{ .Chart.Name }}:{{ .Values.imageTag }}
+          image: {{ .Values.registry.url }}/{{ .Chart.Name }}:{{ .Values.imageTag }}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 3000
               protocol: TCP
+          env:
+            - name: REDIS_HOST
+              value: redis-cluster.{{ .Values.namespace }}.svc
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_USERNAME
+              value: default
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-cluster-secret
+                  key: redis-password
           livenessProbe:
+            initialDelaySeconds: 15
             httpGet:
               path: /
               port: http
           readinessProbe:
+            initialDelaySeconds: 15
             httpGet:
               path: /
               port: http
