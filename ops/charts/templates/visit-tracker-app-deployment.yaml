@@ -41,12 +41,12 @@ spec:
                   name: redis-cluster-secret
                   key: redis-password
           livenessProbe:
-            initialDelaySeconds: 15
+            initialDelaySeconds: 240
             httpGet:
               path: /
               port: http
           readinessProbe:
-            initialDelaySeconds: 15
+            initialDelaySeconds: 240
             httpGet:
               path: /
               port: http
