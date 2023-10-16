@@ -37,15 +37,12 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-EXPOSE 3000
-ENV PORT 3000
-
 CMD ["yarn", "dev"]
 
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+#ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
