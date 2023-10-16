@@ -22,10 +22,6 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 1001
-            allowPrivilegeEscalation: false
           image: {{ .Values.registry.url }}/{{ .Chart.Name }}:{{ .Values.imageTag }}
           imagePullPolicy: IfNotPresent
           ports:
