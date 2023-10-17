@@ -88,13 +88,16 @@ and among different [region](https://kubernetes.io/docs/reference/labels-annotat
   ```
   so we set a statefulset cluster with many nodes.
 
-- For scalability we use horizontal pod autoscaler with metrics server: https://github.com/kubernetes-sigs/metrics-server
+- For scalability in visit-tracker-app app we use horizontal pod autoscaler (HPA) with [metrics server](https://github.com/kubernetes-sigs/metrics-server)
+
+ To test the performance of the HPA with our API we can use a busy box image
+```yaml
+kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://visit-tracker-app-svc.sre-challenge.svc; done"
+```
+
+- For Redis on cluster mode, if we really need to to be very elastics (high or low peaks) I would evaluate the SaaS/DBaaS approach. If the the average and mean are good, we may evaluate a Vertical Pod Autoscaler (VPA) approach after specified a fixed number of nodes. Apparently, when we scale out the redis cluster, it won't rebalance/reshard the currend data, which is very problematic.
 
 - Deploy to dev:
 ```bash
 helm template ./ops/charts -f ./ops/charts/env/dev/values.yaml --set imageTag=`(git rev-parse HEAD)`
 ```
-
-- NODE_OPTIONS='--inspect' node server.js
-- apk --update add redis 
-- redis-cli -u redis://default:ormNS8q7Q5@redis-cluster.sre-challenge.svc:6379 ping
