@@ -2,6 +2,7 @@ registry:
   url: alejandroreba
 # imagePullSecretKey: ''
 
+environment: dev
 namespace: sre-challenge
 
 visitTrackerApp:
@@ -24,8 +25,6 @@ visitTrackerApp:
   antiAffinity: soft
 
 redisDB:
-  replica_nodes: 3
-  redis_nodes: "redis-cluster-0.redis-cluster-headless redis-cluster-1.redis-cluster-headless redis-cluster-2.redis-cluster-headless"
   resources:
     limits:
       cpu: 250m
@@ -34,7 +33,7 @@ redisDB:
       cpu: 250m
       ram: 256Mi
   antiAffinity: soft
-  storage: "8Gi"
+  storage: "5Gi"
 
 #replicaCount: 1
 

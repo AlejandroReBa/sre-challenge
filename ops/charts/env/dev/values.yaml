@@ -7,13 +7,9 @@ visitTrackerApp:
       cpu: 250m
       ram: 512Mi
   antiAffinity: soft
+  redisHost: redis-standalone-service
 
 redisDB:
-# redis-cluster requires minimum 6 nodes (3 masters with 3 slaves) - For fewer use Redis Centinel
-#  replica_nodes: 3
-#  redis_nodes: "redis-cluster-0.redis-cluster-headless redis-cluster-1.redis-cluster-headless redis-cluster-2.redis-cluster-headless"
-  replica_nodes: 6
-  redis_nodes: "redis-cluster-0.redis-cluster-headless redis-cluster-1.redis-cluster-headless redis-cluster-2.redis-cluster-headless redis-cluster-3.redis-cluster-headless redis-cluster-4.redis-cluster-headless redis-cluster-5.redis-cluster-headless"
   resources:
     limits:
       cpu: 250m
@@ -22,4 +18,3 @@ redisDB:
       cpu: 250m
       ram: 256Mi
   antiAffinity: soft
-  storage: "1Gi"
