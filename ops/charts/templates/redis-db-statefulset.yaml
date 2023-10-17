@@ -1,3 +1,4 @@
+{{- if eq .Values.environment "prod" }}
 ---
 # Source: redis-cluster/templates/redis-statefulset.yaml
 apiVersion: apps/v1
@@ -155,3 +156,4 @@ spec:
         resources:
           requests:
             storage: {{ .Values.redisDB.storage }}
+{{- end }}

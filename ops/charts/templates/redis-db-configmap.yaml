@@ -1,3 +1,4 @@
+{{- if eq .Values.environment "prod" }}
 ---
 # Source: redis-cluster/templates/configmap.yaml
 apiVersion: v1
@@ -321,3 +322,4 @@ data:
       echo "$response"
       exit 1
     fi
+{{- end }}

@@ -1,3 +1,4 @@
+{{- if eq .Values.environment "prod" }}
 ---
 # Source: redis-cluster/templates/headless-svc.yaml
 apiVersion: v1
@@ -39,3 +40,4 @@ spec:
       protocol: TCP
   selector:
     k8s-app: redis-cluster
+{{- end }}
