@@ -99,7 +99,23 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 
 - Secrets security: we must always use a Vault to store our credentials, never written down on code within our repositories. If we directly use Kubernetes Secrets implies that we will push sensitive data into the repository (insecure) or that we have applied those changes manually (not repetable deployments). The solution is to use Vaults and synchronize any sensitive data from there, where IAM (Identity and Access Management) controls are in placed and secrets can be rotated from a single source of truth. The technology I recommend is (external secrets) [https://external-secrets.io/], which supports all main providers (AWS Secrets Manager, Azure Key Vault, Google Cloud Secret Manager, HashiCorp Vault, 1Password, etc.) reusing the same kubernetes objects for synchronizing those secrets. Kubernetes Operators, or a dedicated team, would need to manage the secret store middle layer. In ops/core-layer/ I created as reference (it's commented out) what is neccesary to put it into action. The ideal combination is to use the Vault Service from the Cloud Provider where the Managed Kubernetes Service is deployed to avoid the setup of service account credentials directly into Kubernetes. In example, for Google Kubernetes Engine (GKE) and Google Certificate Manager you can use Workload Identity Service Accounts
 
-- Deployments: I recommend the use of **GitOps**, so we embrace a pull approach and keep (almost) the whole state and evolution of deployments into a Kubernetes Cluster in a git repository. This is also more secure as the CI/CD tool is decoupled from the infrastructure where components are deployed (you don't need to touch the firewall). The PV (persistent volume) disk attached to pods can be back up using several tools, as [Velero] (https://velero.io/) which provides support for **Disaster Recovery**, Data Migration and Data Protection. One of the tools I recommends is [Flux2] (https://fluxcd.io/). The installation, configuration and implementation of the continuos delivery/deployment using a git repo with the changes pushed by a GitHub Action is outside of the scope of this project.
+### Deployments: 
+I recommend the use of **GitOps**, so we embrace a pull approach and keep (almost) the whole state and evolution of deployments into a Kubernetes Cluster in a git repository. This is also more secure as the CI/CD tool is decoupled from the infrastructure where components are deployed (you don't need to touch the firewall). The PV (persistent volume) disk attached to pods can be back up using several tools, as [Velero] (https://velero.io/) which provides support for **Disaster Recovery**, Data Migration and Data Protection. One of the tools I recommends is [Flux2] (https://fluxcd.io/). The installation, configuration and implementation of the continuos delivery/deployment using a git repo with the changes pushed by a GitHub Action is outside of the scope of this project.
+
+### Expose the application - Public access
+At the end, our application need to be reachable from the final user. There are several approaches:
+- Use a Service of type LoadBalancer (a real load balancer will be allocated by the Cloud Controller Manager or using MetalLB in onpremise deployments)
+- Kubernetes Ingress (several implementations flavours as Ngnix, HaProxy, Traefik, etc)
+- Kubernetes Gateway
+- Service Mesh (as Istio or Linkerd)
+
+I recommend to use the most simple tool which fulfil your short and mid term requirements.
+For this project, the pick is Ingress with the default [Nginx](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start) implementation. I created:
+- Ingress Controller
+- Ingress Kubernetes Object, which is similar to a configuration file from a Nginx or Apache Server Reverse Proxy
+- Services binded to the deployments
+
+For Kubernetes Services from Cloud vendors, I recommend to install [Cert Manager](https://cert-manager.io/docs/tutorials/acme/nginx-ingress/) to expose our services throught a TLS endpoint signed by a legit certificate granted by Let's Encrypt (free).
 
 - Deploy to dev:
 ```bash
