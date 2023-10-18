@@ -48,6 +48,12 @@ Last but not least, please write a meaninful documentation of your design choice
 
 
 ## Documentation exercise 1 - Pipelines
+
+### Environment variables
+//TODO local ...export
+In GitHub are stored as Environment Secrets.
+
+
 - Use Github Actions
 - Use act to run Github Actions locally: (install it: https://github.com/nektos/act) # linux/arm64 for better performance with M chips - uncompatibilities may arise
 - act --list --container-architecture linux/amd64
@@ -99,6 +105,9 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 
 - Secrets security: we must always use a Vault to store our credentials, never written down on code within our repositories. If we directly use Kubernetes Secrets implies that we will push sensitive data into the repository (insecure) or that we have applied those changes manually (not repetable deployments). The solution is to use Vaults and synchronize any sensitive data from there, where IAM (Identity and Access Management) controls are in placed and secrets can be rotated from a single source of truth. The technology I recommend is (external secrets) [https://external-secrets.io/], which supports all main providers (AWS Secrets Manager, Azure Key Vault, Google Cloud Secret Manager, HashiCorp Vault, 1Password, etc.) reusing the same kubernetes objects for synchronizing those secrets. Kubernetes Operators, or a dedicated team, would need to manage the secret store middle layer. In ops/core-layer/ I created as reference (it's commented out) what is neccesary to put it into action. The ideal combination is to use the Vault Service from the Cloud Provider where the Managed Kubernetes Service is deployed to avoid the setup of service account credentials directly into Kubernetes. In example, for Google Kubernetes Engine (GKE) and Google Certificate Manager you can use Workload Identity Service Accounts
 
+## Security
+Users and process used to run containers on Kubernetes has restricted permissions (non root, don't allow to scalate privileges, etc.)
+
 ### Deployments: 
 I recommend the use of **GitOps**, so we embrace a pull approach and keep (almost) the whole state and evolution of deployments into a Kubernetes Cluster in a git repository. This is also more secure as the CI/CD tool is decoupled from the infrastructure where components are deployed (you don't need to touch the firewall). The PV (persistent volume) disk attached to pods can be back up using several tools, as [Velero] (https://velero.io/) which provides support for **Disaster Recovery**, Data Migration and Data Protection. One of the tools I recommends is [Flux2] (https://fluxcd.io/). The installation, configuration and implementation of the continuos delivery/deployment using a git repo with the changes pushed by a GitHub Action is outside of the scope of this project.
 
@@ -117,7 +126,16 @@ For this project, the pick is Ingress with the default [Nginx](https://kubernete
 
 For Kubernetes Services from Cloud vendors, I recommend to install [Cert Manager](https://cert-manager.io/docs/tutorials/acme/nginx-ingress/) to expose our services throught a TLS endpoint signed by a legit certificate granted by Let's Encrypt (free).
 
-- Deploy to dev:
+- Deploy to dev: // WIP --> Makefile
 ```bash
 helm template ./ops/charts -f ./ops/charts/env/dev/values.yaml --set imageTag=`(git rev-parse HEAD)`
 ```
+
+## Disclaimer
+- I had to add the sharp package to the OCI image so the container generated through the runner target can start on production, running on NextJS standalone mode. Apparently, the code uses
+
+```javascript
+import Image from "next/image";
+```
+That have [Built-In Image Optimization] (https://nextjs.org/docs/messages/install-sharp#why-this-error-occurred), and the error wasn't thrown in dev: https://nextjs.org/docs/messages/sharp-missing-in-production
+- I've also added a dummy test with Jest so I was able to run it as a step from the ci-check GH action workflow.

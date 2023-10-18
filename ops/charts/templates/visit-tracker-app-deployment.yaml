@@ -29,7 +29,11 @@ spec:
             runAsUser: 1001
             runAsGroup: 1001
             allowPrivilegeEscalation: false
+          {{- if .Values.registry.url }}
           image: {{ .Values.registry.url }}/{{ .Chart.Name }}:{{ .Values.imageTag }}
+          {{ else }}
+          image: {{ .Chart.Name }}:{{ .Values.imageTag }}
+          {{ end -}}
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
