@@ -29,15 +29,17 @@ jobs:
     steps:
       - name: Checkout the repo
         uses: actions/checkout@v4
+
       - name: Test Build
-        run: docker build . --target runner -t ${{ secrets.DOCKERHUB_USERNAME }}/visit-tracker-app:${{ github.sha }}
+        run: docker build . --target runner -t visit-tracker-app:${{ github.sha }}
+        
       - name: Run Snyk to check Docker image for vulnerabilities
         uses: snyk/actions/docker@master
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          image: ${{ secrets.DOCKERHUB_USERNAME }}/visit-tracker-app:${{ github.sha }}
+          image: visit-tracker-app:${{ github.sha }}
 
 
       
