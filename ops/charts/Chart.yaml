@@ -1,0 +1,6 @@
+apiVersion: v2
+name: visit-tracker-app
+description: A NextJS visit tracker app on Kubernetes - SRE Challenge
+type: application
+version: 0.1.0
+appVersion: "1.16.0"

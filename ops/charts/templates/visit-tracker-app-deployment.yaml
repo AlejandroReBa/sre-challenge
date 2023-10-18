@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    k8s-app: {{ .Chart.Name }}
+spec:
+  selector:
+    matchLabels:
+      k8s-app: {{ .Chart.Name }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  template:
+    metadata:
+      name: {{ .Chart.Name }}
+      labels:
+        k8s-app: {{ .Chart.Name }}
+    spec:
+      securityContext:
+        fsGroup: 2000
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1001
+            runAsGroup: 1001
+            allowPrivilegeEscalation: false
+          image: {{ .Values.registry.url }}/{{ .Chart.Name }}:{{ .Values.imageTag }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: REDIS_HOST
+              value: {{ .Values.visitTrackerApp.redisHost }}.{{ .Values.namespace }}.svc
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_USERNAME
+              value: default
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-cluster-secret
+                  key: redis-password
+          livenessProbe:
+            initialDelaySeconds: 30
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 30
+            httpGet:
+              path: /
+              port: http
+          resources:
+            limits:
+              cpu: {{ .Values.visitTrackerApp.resources.limits.cpu }}
+              memory: {{ .Values.visitTrackerApp.resources.limits.ram }}
+            requests:
+              cpu: {{ .Values.visitTrackerApp.resources.requests.cpu }}
+              memory: {{ .Values.visitTrackerApp.resources.limits.ram }}
+      affinity:
+        podAntiAffinity:
+          {{- if eq .Values.visitTrackerApp.antiAffinity "hard" }}
+          requiredDuringSchedulingIgnoredDuringExecution:
+          {{- else }}
+          preferredDuringSchedulingIgnoredDuringExecution:
+          {{- end }}
+          - weight: 1
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ .Chart.Name }}
+              topologyKey: "kubernetes.io/hostname"
+      {{- with .Values.visitTrackerApp.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

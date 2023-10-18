@@ -1,0 +1,20 @@
+visitTrackerApp:
+  resources:
+    limits:
+      cpu: 250m
+      ram: 512Mi
+    requests:
+      cpu: 250m
+      ram: 512Mi
+  antiAffinity: soft
+  redisHost: redis-standalone-service
+
+redisDB:
+  resources:
+    limits:
+      cpu: 250m
+      ram: 256Mi
+    requests:
+      cpu: 250m
+      ram: 256Mi
+  antiAffinity: soft

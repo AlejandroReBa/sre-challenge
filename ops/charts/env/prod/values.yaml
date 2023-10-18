@@ -1,0 +1,25 @@
+environment: prod
+visitTrackerApp:
+  resources:
+    limits:
+      cpu: 500m
+      ram: 512Mi
+    requests:
+      cpu: 5000m
+      ram: 512Mi
+  antiAffinity: hard
+  redisHost: redis-cluster
+
+redisDB:
+  env: prod
+  replica_nodes: 6
+  redis_nodes: "redis-cluster-0.redis-cluster-headless redis-cluster-1.redis-cluster-headless redis-cluster-2.redis-cluster-headless redis-cluster-3.redis-cluster-headless redis-cluster-4.redis-cluster-headless redis-cluster-5.redis-cluster-headless"
+  resources:
+    limits:
+      cpu: 500m
+      ram: 512Mi
+    requests:
+      cpu: 500m
+      ram: 512Mi
+  antiAffinity: hard
+  storage: "10Gi"

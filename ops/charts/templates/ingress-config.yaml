@@ -1,0 +1,30 @@
+{{- if eq .Values.environment "dev" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sre-challenge-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: "2000m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60s"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60s"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Content-Type-Options: nosniff";
+      more_set_headers "X-Frame-Options: SAMEORIGIN";
+      more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
+      more_set_headers "X-Xss-Protection: 1; mode=block";
+      more_set_headers "Cache-control: no-cache, no-store, max-age=0, must-revalidate";
+spec:
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: visit-tracker-app-svc
+            port:
+              number: 80
+{{- end }}
